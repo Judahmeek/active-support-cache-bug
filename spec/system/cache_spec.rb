@@ -17,8 +17,8 @@ describe "wat", :caching do
     end
 
     expect(create_component_code).to have_received(:call).once
-    puts "XYZYX"
-    p cache_data.values.first.value
-    expect(cache_data.values.first.value[:component_html]).to eq({})
+    expect(cache_data.values.first.value).to eq({ component_html: "<div>Something</div>" })
+    expect(cache_data.values.first.value[:component_html]).not_to raise_error(TypeError,
+    "no implicit conversion of Symbol into Integer")
   end
 end

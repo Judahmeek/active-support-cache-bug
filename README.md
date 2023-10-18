@@ -1,24 +1,7 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+To run this example repository:
+* git clone https://github.com/Judahmeek/active-support-cache-bug.git ascb
+* gem install bundler:2.4.19
+* bundle
+* rspec spec/system/cache_spec.rb
