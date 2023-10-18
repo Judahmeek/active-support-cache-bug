@@ -4,21 +4,32 @@ require "rails"
 require "rails/test_help"
 require_relative "../spec_helper"
 
-class TestingCache
-  def call; end
+RSpec.configure do |config|
+  config.before(:each, :caching) do
+    cache_store = ActiveSupport::Cache::MemoryStore.new
+    allow(controller).to receive(:cache_store).and_return(cache_store) if defined?(controller) && controller
+    allow(::Rails).to receive(:cache).and_return(cache_store)
+    Rails.cache.clear
+  end
+
+  config.around(:each, :caching) do |example|
+    caching = ActionController::Base.perform_caching
+    ActionController::Base.perform_caching = true
+    example.run
+    ActionController::Base.perform_caching = caching
+  end
 end
 
 describe "wat", :caching do
   it "fetches the value from the cache if the value is a Hash" do
-    create_component_code = instance_double(TestingCache, call: { component_html: "<div>Something</div>" })
+    hash = { key: "value" }
 
     result1 = Rails.cache.fetch("the_cache_key-7.1") do
-      create_component_code.call
+      hash
     end
 
-    expect(create_component_code).to have_received(:call).once
-    expect(cache_data.values.first.value).to eq({ component_html: "<div>Something</div>" })
-    expect{cache_data.values.first.value[:component_html]}.not_to raise_error(TypeError,
+    expect(Rails.cache.instance_variable_get(:@data).values.first.value).to eq(hash)
+    expect{Rails.cache.instance_variable_get(:@data).values.first.value[:key]}.not_to raise_error(TypeError,
     "no implicit conversion of Symbol into Integer")
   end
 end
